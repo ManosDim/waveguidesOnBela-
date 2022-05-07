@@ -1,14 +1,6 @@
 import("stdfaust.lib");
 
 
-
-
-
-
-gate=button("( . Y . )");
-
-freq=hslider("frequency",220,50,2000,0.1);
-p=hslider("position",0.3,0,1,0.01);
 period=ma.SR/(freq*2):si.smoo;
 p0=period*p;
 p1=period*(1-p);
@@ -39,10 +31,12 @@ B=interpDelay(1024,0.01,p1,gate),interpDelay(1024,0.01,p1,gate),_;
 
 
 
+gain1= pressure*5;
+freq=hslider("[1]Frequency[BELA:ANALOG_0]", 440 ,60, 1500, 0.1);
+p=hslider("[3]Position[BELA:ANALOG_2]",0.3,0,1,0.01);
+pressure =hslider("[0]ON/OFF (Plucking)[BELA:ANALOG_1]",0,0,1,0.01);
+gate = pressure > 0.01;
+gain=hslider("[1]gain[BELA:ANALOG_3]",20,0, 20, 0.1);
 
-
-
-
-
-process=gate:ba.impulsify:model;
+process=gate:gain1*ba.impulsify:model*gain;
 //for polyphony the trick is to have a linear interpolator p in the 1st delay line and a p-1 in the 2st delay line
